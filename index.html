@@ -1,0 +1,269 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Calendar Selection</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloufdflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+  <style>
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+　　　　background-color: #afeeee; /* 淡い水色に設定 */
+    }
+    .date:hover {
+      cursor: pointer;
+      background-color: #fbd38d;
+    }
+    .calendar-day {
+      font-weight: bold;
+    }
+    .calendar-day-sun {
+      color: red;
+    }
+    .calendar-day-sat {
+      color: blue;
+    }
+    .step-button {
+      display: inline-block;
+      background-color: #68d391;
+      color: white;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+    #generate-url {
+      display: inline-block;
+      background-color: #f6e05e;
+      color: white;
+      font-weight: bold;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+    }
+  </style>
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+    let now = new Date(); // 現在の日付と時刻を取得
+    let currentMonth = new Date(now.getFullYear(), now.getMonth(), 1); // 現在の月の最初の日を取得
+
+  // 今日の日付が1から10の間であるかチェック
+  if (now.getDate() > 10) {
+    // 10日を超えている場合、次の月を表示
+    currentMonth.setMonth(currentMonth.getMonth() + 1);
+  }
+      const monthTitle = document.querySelectorAll('.month-title');
+      const calendarGrids = document.querySelectorAll('.calendar-grid');
+
+      function updateCalendar(month) {
+        monthTitle.forEach(title => {
+          title.textContent = `${month.getFullYear()}年 ${month.getMonth() + 1}月`;
+        });
+
+        calendarGrids.forEach(grid => {
+          grid.innerHTML = ''; // Clear the calendar grid
+
+          // Get the first day of the month
+          const firstDay = new Date(month.getFullYear(), month.getMonth(), 1).getDay();
+          // Get the number of days in the month
+          const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+
+          // Add day labels
+          const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+          daysOfWeek.forEach((day, index) => {
+            let dayClass = 'calendar-day';
+            if (index === 0) dayClass += ' calendar-day-sun';
+            if (index === 6) dayClass += ' calendar-day-sat';
+            grid.innerHTML += `<div class="${dayClass}">${day}</div>`;
+          });
+
+          // Add empty cells before the first day of the month
+          for (let i = 0; i < firstDay; i++) {
+            grid.innerHTML += '<div></div>';
+          }
+
+          // Add day cells to the calendar
+          for (let i = 1; i <= daysInMonth; i++) {
+            grid.innerHTML += `<div class="date">${i}</div>`;
+          }
+
+          // Re-add event listeners to new date elements
+          grid.querySelectorAll('.date').forEach(date => {
+            date.addEventListener('click', function() {
+              this.classList.toggle('bg-yellow-300');
+            });
+          });
+        });
+      }
+
+      updateCalendar(currentMonth);
+
+      document.querySelectorAll('.prev-month').forEach(button => {
+        button.addEventListener('click', function() {
+          currentMonth.setMonth(currentMonth.getMonth() - 1);
+          updateCalendar(currentMonth);
+        });
+      });
+
+      document.querySelectorAll('.next-month').forEach(button => {
+        button.addEventListener('click', function() {
+          currentMonth.setMonth(currentMonth.getMonth() + 1);
+          updateCalendar(currentMonth);
+        });
+      });
+
+      const generateUrlButton = document.getElementById('generate-url');
+      generateUrlButton.addEventListener('click', function() {
+  const nameSelect = document.getElementById('name-select');
+  let name = nameSelect.value;
+  if (name === 'その他') {
+    const otherNameInput = document.getElementById('other-name-input');
+    name = otherNameInput.value;
+    if (!name.trim()) {
+      alert('名前を入力してください。');
+      return;
+    }
+  } else if (!name) {
+    alert('名前を選択してください。');
+    return;
+  }
+
+  const comment = document.querySelector('#comment-input').value;
+  const preferredDates = Array.from(document.querySelectorAll('.preferred .date.bg-yellow-300')).map(el => el.textContent.trim());
+  const notPreferredDates = Array.from(document.querySelectorAll('.not-preferred .date.bg-yellow-300')).map(el => el.textContent.trim());
+  
+  const summary = `回答者の名前: ${name}\n希望日: ${preferredDates.join(', ')}\n希望しない日: ${notPreferredDates.join(', ')}\nコメント: ${comment}`;
+  const email = 'rosai041321@gmail.com';
+  const subject = encodeURIComponent('オンコール希望');
+  const body = encodeURIComponent(summary);
+  // const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}`;
+  
+  // window.location.href = mailtoLink;
+});
+
+    });
+  </script>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-screen-md mx-auto py-10">
+    <div class="text-right mb-4">
+      <span class="text-lg font-semibold">呼内オンコール</span>
+    </div>
+
+  <div class="mb-8">
+  <span class="step-button">STEP 1</span>
+  <select id="name-select" class="mt-2 p-2 border border-gray-300 rounded w-full">
+    <option value="">回答者の名前を選択してください</option>
+    <option value="河野">河野</option>
+    <option value="松村">松村</option>
+    <option value="伊藤">伊藤</option>
+    <option value="石毛">石毛</option>
+    <option value="八木沢">八木沢</option>
+    <option value="堂脇">堂脇</option>
+    <option value="鈴木">鈴木</option>
+    <option value="堀">堀</option>
+    <option value="石川">石川</option>
+    <!-- 他の選択肢を追加 -->
+    <option value="その他">その他</option>
+  </select>
+  <!-- "その他"が選択された場合に表示する新しいテキスト入力フィールド -->
+  <input id="other-name-input" type="text" placeholder="名前を入力" class="mt-2 p-2 border border-gray-300 rounded w-full" style="display:none;">
+  <!-- エラーメッセージはそのまま -->
+  <p id="name-error" class="text-red-500 text-sm mt-2" style="display: none;">名前を入力してください。</p>
+</div>
+ <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init("XhqJVhB68ooIcAMCD"); // あなたのEmailJSのユーザーIDに置き換えてください
+    })();
+  </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const nameSelect = document.getElementById('name-select');
+  const otherNameInput = document.getElementById('other-name-input');
+
+  // プルダウンメニューの選択が変更されたときのイベントリスナーを追加
+  nameSelect.addEventListener('change', function() {
+    if (this.value === 'その他') {
+      // "その他"が選択されたら、テキストフィールドを表示
+      otherNameInput.style.display = '';
+    } else {
+      // "その他"以外が選択されたら、テキストフィールドを非表示
+      otherNameInput.style.display = 'none';
+    }
+  });
+   // EmailJSを使ってフォームを送信する処理
+    document.getElementById('generate-url').addEventListener('click', function(event) {
+        event.preventDefault(); // フォームのデフォルト送信を防ぐ
+
+        // フォームのデータを取得
+        var nameSelect = document.getElementById('name-select');
+        var name = nameSelect.value === 'その他' ? document.getElementById('other-name-input').value : nameSelect.value;
+        var comment = document.getElementById('comment-input').value;
+        var preferredDates = Array.from(document.querySelectorAll('.preferred .date.bg-yellow-300')).map(el => el.textContent.trim()).join(', ');
+        var notPreferredDates = Array.from(document.querySelectorAll('.not-preferred .date.bg-yellow-300')).map(el => el.textContent.trim()).join(', ');
+        var email = document.getElementById('email-input').value;
+
+        // EmailJSを使用してメールを送信
+        console.log(preferredDates, notPreferredDates);
+        emailjs.send("service_v7cenku", "template_rm69kao", {
+            "name": name,
+            "comment": comment,
+            "preferred_dates": preferredDates,
+            "not_preferred_dates": notPreferredDates,
+            "email": email
+        }).then(function(response) {
+            alert(`送信できました，ありがとうございます！\n回答者の名前: ${name}\nコメント: ${comment}\n希望日: ${preferredDates}\n希望しない日: ${notPreferredDates}`);
+  }, function(error) {
+        }, function(error) {
+            alert('送信失敗．もう一度試しても失敗する場合はrosai041321@gmail.comに連絡をください: ' + error);
+        });
+    });
+});
+</script>
+
+    <div class="mb-8">
+      <span class="step-button">STEP 2</span>
+      <p class="text-gray-700 text-sm mt-2">希望日を選択してください</p>
+      <div class="mt-2 p-4 border border-gray-300 rounded preferred bg-white">
+        <div class="flex justify-between items-center mb-4">
+          <button class="prev-month"><i class="fas fa-chevron-left"></i></button>
+          <span class="month-title font-bold">2023年 12月</span>
+          <button class="next-month"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 calendar-grid">
+          <!-- Calendar days will be generated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <span class="step-button">STEP 3</span>
+      <p class="text-gray-700 text-sm mt-2">希望しない日を選択してください.（翌日外来・外勤のためできない日も含む）</p>
+      <div class="mt-2 p-4 border border-gray-300 rounded not-preferred bg-white">
+        <div class="flex justify-between items-center mb-4">
+          <button class="prev-month"><i class="fas fa-chevron-left"></i></button>
+          <span class="month-title font-bold">2023年 12月</span>
+          <button class="next-month"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 calendar-grid">
+          <!-- Calendar days will be generated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-8">
+      <span class="step-button">STEP 4</span>
+      <p class="text-gray-700 text-sm mt-2">コメントを追加してください（任意）</p>
+    <textarea id="comment-input" class="mt-2 p-2 border border-gray-300 rounded w-full" placeholder="コメント"></textarea>
+    </div>
+    <div class="mb-8">
+      <label for="email-input" class="block text-sm font-medium text-gray-700">メールアドレス（任意ですが，登録すると送信結果がメールで送られます）</label>
+      <input type="email" id="email-input" name="email" placeholder="your.email@example.com" class="mt-1 p-2 border border-gray-300 rounded w-full">
+    </div>
+    <div>
+      <button id="generate-url" class="bg-green-600 text-white font-bold py-2 px-4 rounded-full">送信する</button>
+    </div>
+  </div>
+</body>
+</html>
