@@ -232,6 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // フォームのデータを取得
         var nameSelect = document.getElementById('name-select');
+        var name = nameSelect.value;
+        if (!name) {
+        alert('名前を選択してください。');
+        return; // 名前が選択されていない場合はここで処理を中止
+    }
         var name = nameSelect.value === 'その他' ? document.getElementById('other-name-input').value : nameSelect.value;
         var comment = document.getElementById('comment-input').value;
         var preferredDates = Array.from(document.querySelectorAll('.preferred .date.bg-yellow-300')).map(el => el.textContent.trim()).join(', ');
