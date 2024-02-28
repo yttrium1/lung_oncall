@@ -77,14 +77,17 @@
     }
   </style>
   <script>
-   document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     let now = new Date(); // 現在の日付と時刻を取得
     let currentMonth = new Date(now.getFullYear(), now.getMonth(), 1); // 現在の月の最初の日を取得
 
-  // 今日の日付が1から10の間であるかチェック
-  if (now.getDate() > 10) {
-    // 10日を超えている場合、次の月を表示
+  // 現在の日が1から10の間かどうかをチェック
+  if (now.getDate() >= 1 && now.getDate() <= 10) {
+    // 1-10日の場合、1ヶ月後のカレンダーを表示
     currentMonth.setMonth(currentMonth.getMonth() + 1);
+  } else {
+    // それ以外の場合、2ヶ月後のカレンダーを表示
+    currentMonth.setMonth(currentMonth.getMonth() + 2);
   }
       const monthTitle = document.querySelectorAll('.month-title');
       const calendarGrids = document.querySelectorAll('.calendar-grid');
@@ -93,6 +96,7 @@
         monthTitle.forEach(title => {
           title.textContent = `${month.getFullYear()}年 ${month.getMonth() + 1}月`;
         });
+
 
         calendarGrids.forEach(grid => {
           grid.innerHTML = ''; // Clear the calendar grid
