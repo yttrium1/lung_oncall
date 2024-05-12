@@ -205,9 +205,9 @@
     let now = new Date(); // 現在の日付と時刻を取得
     let currentMonth = new Date(now.getFullYear(), now.getMonth(), 1); // 現在の月の最初の日を取得
 
-  // 現在の日が1から10の間かどうかをチェック
-  if (now.getDate() >= 1 && now.getDate() <= 10) {
-    // 1-10日の場合、1ヶ月後のカレンダーを表示
+  // 現在の日が1から15の間かどうかをチェック
+  if (now.getDate() >= 1 && now.getDate() <= 15) {
+    // 1-15日の場合、1ヶ月後のカレンダーを表示
     currentMonth.setMonth(currentMonth.getMonth() + 1);
   } else {
     // それ以外の場合、2ヶ月後のカレンダーを表示
